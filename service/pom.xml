@@ -5,14 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>net.fixfixt</groupId>
-        <artifactId>fixaide</artifactId>
+        <groupId>net.fixfixt.fixaide</groupId>
+        <artifactId>fixaide-all</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>net.fixfixt</groupId>
-    <artifactId>server</artifactId>
+    <groupId>net.fixfixt.fixaide</groupId>
+    <artifactId>fixaide-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    
+    <dependencies>
+        <dependency>
+            <groupId>net.fixfixt.fixaide</groupId>
+            <artifactId>fixaide-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

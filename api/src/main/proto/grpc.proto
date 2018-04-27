@@ -1,0 +1,8 @@
+syntax="proto3";
+option java_package="net.fixfixt.fixaide.api";
+
+import "protos.proto";
+
+service DictExplorerService {
+    rpc Add(DictExplorer) returns (DictExplorer);
+}

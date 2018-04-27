@@ -1,0 +1,7 @@
+syntax="proto3";
+option java_package="net.fixfixt.fixaide.api";
+
+message DictExplorer {
+    string uuid = 1;
+    string name = 2;
+}
