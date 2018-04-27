@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.fixfixt</groupId>
+    <artifactId>fixaide</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>fix-aide-server</module>
+        <module>fix-aide-client-jx</module>
+        <module>fix-aide-core</module>
+        <module>fix-aide-common</module>
+        <module>fix-aide-api</module>
+    </modules>
+
+</project>
