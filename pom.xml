@@ -10,11 +10,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>service</module>
-        <module>client-javafx</module>
-        <module>core</module>
-        <module>common</module>
-        <module>api</module>
+        <module>fixaide-service</module>
+        <module>fixaide-client-javafx</module>
+        <module>fixaide-core</module>
+        <module>fixaide-common</module>
+        <module>fixaide-api</module>
     </modules>
 
     <build>
