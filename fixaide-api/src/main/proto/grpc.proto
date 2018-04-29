@@ -5,4 +5,5 @@ import "protos.proto";
 
 service DictExplorerService {
     rpc Add(DictExplorer) returns (DictExplorer);
+    rpc FindAll(Empty) returns (stream DictExplorer);
 }
