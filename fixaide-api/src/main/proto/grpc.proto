@@ -2,8 +2,30 @@ syntax="proto3";
 option java_package="net.fixfixt.fixaide.api";
 
 import "protos.proto";
+import "google/protobuf/any.proto";
 
 service DictExplorerService {
     rpc Add(DictExplorer) returns (DictExplorer);
     rpc FindAll(Empty) returns (stream DictExplorer);
+
+    rpc subscribe(SubRequest) returns (stream SubResponse);
+
 }
+
+message SubRequest {
+    string topic = 1;
+    string event_type = 2;
+}
+
+message SubResponse {
+    RespType respType = 1;
+    google.protobuf.Any data = 2;
+    string str_data = 3;
+
+    enum RespType{
+        SUB_SUCC = 0;
+        SUB_FAIL = 1;
+        PUB_DATA = 2;
+    }
+}
+

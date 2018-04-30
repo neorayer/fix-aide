@@ -2,11 +2,14 @@ package net.fixfixt.fixaide.api;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
 import org.junit.Test;
 
 import net.fixfixt.fixaide.api.DictExplorerServiceGrpc;
 import net.fixfixt.fixaide.api.DictExplorerServiceGrpc.*;
 import net.fixfixt.fixaide.api.Protos.*;
+
+import java.io.IOException;
 
 
 /**
@@ -15,21 +18,43 @@ import net.fixfixt.fixaide.api.Protos.*;
 public class GrpcServiceTest {
 
     @Test
-    public void test() {
+    public void test() throws IOException {
         ManagedChannel channel = ManagedChannelBuilder
                 .forAddress("localhost", 10240)
                 .usePlaintext()
                 .build();
-        DictExplorerServiceBlockingStub stub = DictExplorerServiceGrpc.newBlockingStub(channel);
+        DictExplorerServiceBlockingStub blockingStub = DictExplorerServiceGrpc.newBlockingStub(channel);
 
         DictExplorer dictExplorer =  DictExplorer.newBuilder()
                 .setName("Standard FIX.4.4")
                 .setUuid("10001")
                 .build();
 
-        stub.add(dictExplorer);
+        blockingStub.add(dictExplorer);
 
-        channel.shutdown();
+        DictExplorerServiceStub stub = DictExplorerServiceGrpc.newStub(channel);
+        stub.subscribe(Grpc.SubRequest.newBuilder().setTopic("topic1").build(), new StreamObserver<Grpc.SubResponse>(){
+
+            @Override
+            public void onNext(Grpc.SubResponse subResponse) {
+                System.out.println("**********");
+                System.out.println(subResponse);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+
+        //channel.shutdown();
+
+        System.in.read();
     }
 
 }
