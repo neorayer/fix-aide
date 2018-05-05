@@ -15,6 +15,7 @@
         <module>fixaide-core</module>
         <module>fixaide-common</module>
         <module>fixaide-api</module>
+        <module>fixaide-infrastructure</module>
     </modules>
 
     <properties>

@@ -1,4 +1,1 @@
-logging:
-  level:
-    root: ERROR
-    net.fixfixt: DEBUG
+
