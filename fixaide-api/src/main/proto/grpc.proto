@@ -4,15 +4,12 @@ option java_package = "net.fixfixt.fixaide.api";
 import "google/protobuf/any.proto";
 
 service CrudService {
-    rpc Create(Envelope) returns (Envelope);
-    rpc Read(Envelope) returns (Envelope);
-    rpc Update(Envelope) returns (Envelope);
-    rpc Delete(Envelope) returns (Envelope);
-    rpc Find(Envelope) returns (stream Envelope);
+    rpc Create (Envelope) returns (Envelope);
+    rpc Update (Envelope) returns (Envelope);
+    rpc Delete (Envelope) returns (Envelope);
+    rpc Read (Envelope) returns (Envelope);
+    rpc Find (Envelope) returns (stream Envelope);
     rpc FindAll (Envelope) returns (stream Envelope);
-
-    rpc subscribe (SubRequest) returns (stream SubResponse);
-
 }
 
 message Empty {
@@ -24,14 +21,17 @@ message Envelope {
     string request_id = 2;
     string response_id = 3;
 
-    PayloadEnc payload_enc = 4;
+    string payload_type = 4;
+    PayloadEnc payload_enc = 5;
 
-    string str_payload = 5;
-    google.protobuf.Any proto_payload = 6;
+    string str_payload = 6;
+    google.protobuf.Any proto_payload = 7;
 
     enum Direction {
         REQUEST = 0;
-        RESPONSE = 2;
+        RESPONSE = 1;
+        UP_EVENT = 2;
+        DOWN_EVENT = 3;
     }
 
     enum PayloadEnc {
@@ -44,18 +44,6 @@ message Envelope {
 
 message SubRequest {
     string topic = 1;
-    string event_type = 2;
 }
 
-message SubResponse {
-    RespType respType = 1;
-    google.protobuf.Any data = 2;
-    string str_data = 3;
-
-    enum RespType {
-        SUB_SUCC = 0;
-        SUB_FAIL = 1;
-        PUB_DATA = 2;
-    }
-}
 

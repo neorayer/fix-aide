@@ -9,6 +9,7 @@ spring:
     password:
     url: jdbc:h2:tcp://localhost:9092/~/db-fxaide
   jpa:
+    hibernate.ddl-auto: update
     show-sql: true
     properties.hibernate.format_sql: true
 

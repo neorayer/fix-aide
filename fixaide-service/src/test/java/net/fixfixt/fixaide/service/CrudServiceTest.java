@@ -3,8 +3,8 @@ package net.fixfixt.fixaide.service;
 import io.grpc.ManagedChannel;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
-import net.fixfixt.fixaide.api.CrudServiceGrpc;
-import net.fixfixt.fixaide.api.CrudServiceGrpc.CrudServiceBlockingStub;
+import net.fixfixt.fixaide.api.DataDictServiceGrpc;
+import net.fixfixt.fixaide.api.DataDictServiceGrpc.DataDictServiceBlockingStub;
 import net.fixfixt.fixaide.api.EnvelopeHelper;
 import net.fixfixt.fixaide.api.Grpc.Envelope;
 import net.fixfixt.fixaide.model.DataDict;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by Rui Zhou on 2018/4/28.
@@ -29,7 +28,7 @@ import java.util.stream.StreamSupport;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @ComponentScan("net.fixfixt.fixaide")
-public class DataDictServiceTest {
+public class CrudServiceTest {
 
     @Autowired
     private DataDictRepository repository;
@@ -37,9 +36,10 @@ public class DataDictServiceTest {
     @Autowired
     private CrudService service;
 
-    EnvelopeHelper envelopeHelper = new EnvelopeHelper();
+    @Autowired
+    EnvelopeHelper envelopeHelper;
 
-    CrudServiceBlockingStub stub;
+    DataDictServiceBlockingStub stub;
 
     @PostConstruct
     public void init() throws IOException {
@@ -50,7 +50,7 @@ public class DataDictServiceTest {
                 .start();
 
         ManagedChannel channel = InProcessChannelBuilder.forName("inner").usePlaintext().build();
-        stub = CrudServiceGrpc.newBlockingStub(channel);
+        stub = DataDictServiceGrpc.newBlockingStub(channel);
     }
 
     @Test
@@ -62,8 +62,7 @@ public class DataDictServiceTest {
         dataDict.setCreatedTime(LocalDateTime.now());
 
         // Envelope
-        Envelope envelope = envelopeHelper.envelopeBuilder(dataDict, Envelope.PayloadEnc.JSON)
-                .build();
+        Envelope envelope = envelopeHelper.envelopeBuilder(dataDict).build();
 
         stub.create(envelope);
 

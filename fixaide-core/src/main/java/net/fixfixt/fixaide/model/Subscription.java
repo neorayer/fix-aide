@@ -7,22 +7,21 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
 
 /**
- * Created by Rui Zhou on 2018/4/28.
+ * Created by Rui Zhou on 2018/5/6.
  */
-@Data
 @Entity
-@RequiredArgsConstructor
+@Data
 @NoArgsConstructor
-public class DataDict {
+@RequiredArgsConstructor
+public class Subscription {
 
     @Id
     @NonNull
     private String uuid;
 
-    private String name;
+    private String topic;
 
-    private LocalDateTime createdTime;
+    private String subscriber;
 }

@@ -1,51 +1,100 @@
 package net.fixfixt.fixaide.service;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 import net.fixfixt.fixaide.api.CrudServiceGrpc;
 import net.fixfixt.fixaide.api.EnvelopeHelper;
 import net.fixfixt.fixaide.api.Grpc.Envelope;
-import net.fixfixt.fixaide.model.DataDict;
 import net.fixfixt.fixaide.repository.DataDictRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 /**
  * Created by Rui Zhou on 2018/5/5.
  */
 @Service
-public class CrudService extends CrudServiceGrpc.CrudServiceImplBase {
+@Slf4j
+public class CrudService extends CrudServiceGrpc.CrudServiceImplBase{
 
     @Autowired
     private DataDictRepository dataDictRepository;
 
-    private EnvelopeHelper envelopeHelper = new EnvelopeHelper();
+    @Autowired
+    private EnvelopeHelper envelopeHelper;
 
-    @Override
-    public void create(Envelope envelope, StreamObserver<Envelope> observer) {
-        DataDict dataDict = envelopeHelper.payload(envelope, DataDict.class);
-        dataDictRepository.save(dataDict);
+    @PostConstruct
+    private void postConstruct() {
 
-        Envelope responseEnvelope = Envelope.newBuilder()
-                .setDirection(Envelope.Direction.RESPONSE)
-                .setRequestId(envelope.getRequestId())
-                .setPayloadEnc(Envelope.PayloadEnc.PLAIN)
-                .setStrPayload("Save OK").build();
+    }
 
-        observer.onNext(responseEnvelope);
-        observer.onCompleted();
+    private BaseService baseService(String type) {
+        return null;
+    }
+
+    private void handleException(StreamObserver observer, Exception e)  {
+        log.error("", e);
+        observer.onError(Status.INTERNAL.withCause(e).asRuntimeException());
     }
 
     @Override
-    public void findAll(Envelope envelope, StreamObserver<Envelope> observer){
-        StreamSupport.stream(dataDictRepository.findAll().spliterator(), false)
-                .map(this::payloadToEnvelope)
-                .forEach(observer::onNext);
-        observer.onCompleted();
+    public void create(Envelope request, StreamObserver<Envelope> observer) {
+        try {
+            Object payload = envelopeHelper.payload(request);
+            baseService(request.getPayloadType()).create(payload);
+
+            Envelope response = envelopeHelper.response(request, payload);
+            observer.onNext(response);
+            observer.onCompleted();
+        } catch (Exception e) {
+            handleException(observer, e);
+        }
     }
 
-    private Envelope payloadToEnvelope(DataDict dataDict) {
-        return envelopeHelper.envelopeBuilder(dataDict, Envelope.PayloadEnc.JSON).build();
+    @Override
+    public void findAll(Envelope request, StreamObserver<Envelope> observer) {
+        try {
+            StreamSupport.stream(dataDictRepository.findAll().spliterator(), false)
+                    .map(d -> envelopeHelper.response(request, d))
+                    .forEach(observer::onNext);
+            observer.onCompleted();
+        } catch (Exception e) {
+            handleException(observer, e);
+        }
     }
+
+    @Override
+    public void read(Envelope request, StreamObserver<Envelope> observer) {
+        try {
+            System.out.println();
+            DataDict dataDict = envelopeHelper.payload(request, DataDict.class);
+            Optional<DataDict> optional = dataDictRepository.findById(dataDict.getUuid());
+            if (!optional.isPresent()) {
+                observer.onError(Status.NOT_FOUND.asException());
+            } else {
+                optional.map(d -> envelopeHelper.response(request, d)).ifPresent(observer::onNext);
+                observer.onCompleted();
+            }
+        } catch (Exception e) {
+            handleException(observer, e);
+        }
+    }
+
+    @Override
+    public void delete(Envelope request, StreamObserver<Envelope> observer) {
+        try {
+            DataDict dataDict = envelopeHelper.payload(request, DataDict.class);
+            dataDictRepository.delete(dataDict);
+            observer.onNext(envelopeHelper.response(request, dataDict));
+            observer.onCompleted();
+        } catch (Exception e) {
+            handleException(observer, e);
+        }
+    }
+
 }
